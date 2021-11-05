@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <div class="form-container">
+            <div class="form-group">
+                <input type="number" placeholder="Author_id" v-model="Author_id">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="title" v-model="title">
+            </div>
+            <div class="form-group">
+                <textarea cols="5" placeholder="description" v-model="body"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="button" @click="createTodo" v-if="!isHidden">Add Todo</button>
+                <button type="button" @click="updatedTodo" v-if="isHidden">Updated</button>
+            </div>
+        </div>
+        <section class="container">
+            <div class="card" v-for="todo in todos">
+                <div class="card-title">
+                    <h1>{{todo.title}}</h1>
+                </div>
+                <div class="card-body">
+                    <p>{{todo.body}}</p>
+                </div>
+                <div class="card-footer">
+                    <p>{{todo.created_at}}</p>
+                </div>
+                <div>
+                    <button type="button" @click="removeTodo(todo.id)">Delete</button>
+                    <button type="button" @click="editTodo(todo)">Edit</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            todos: [],
+            Author_id: null,
+            title: "",
+            body: "",
+            isHidden: false,
+            url: "http://localhost:3000/api/books",
+            updateId: null
+
+        },
+        methods: {
+            getTodos() {
+                axios.get(this.url).then(response => {
+                    this.todos = response.data
+                });
+            },
+            createTodo() {
+                let data = {user_id: parseInt(this.Author_id), title: this.title, body: this.body};
+                axios.post(this.url, data).then(() => {
+                    window.location.reload()
+                });
+            },
+            removeTodo(id) {
+                axios.delete(this.url + "/" + id).then(() => {
+                    window.location.reload()
+                });
+            },
+            editTodo(todo) {
+                this.user_id = todo.user_id;
+                this.title = todo.title;
+                this.body = todo.body;
+                this.updateId = todo.id
+                this.isHidden = true
+            },
+            updatedTodo() {
+                let data = {user_id: parseInt(this.user_id), title: this.title, body: this.body};
+                axios.put(this.url + "/" + this.updateId, data).then(() => {
+                    window.location.reload()
+                });
+                this.isHidden = false
+            }
+
+        },
+        mounted() {
+            this.getTodos();
+        },
+    })
+</script>
+</html>
