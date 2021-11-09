@@ -51,8 +51,18 @@ h1, p {
 .form-group button {
     cursor: pointer;
     border:none;
-    background: orange;
+    background: rgb(26, 241, 62);
     width: 100%;
     padding: 12px;
     color:#fff;
+}
+#delete{
+    background: red;
+    border: red;
+    padding: 8px;
+}
+#updatebb{
+    background: rgb(143, 15, 148);
+    border: rgb(143, 15, 148);
+    padding: 8px;
 }
